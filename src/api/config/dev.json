@@ -1,0 +1,54 @@
+{
+    "port": 30002,
+  
+    "log": {
+      "appenders": {
+        "stdout": {
+          "type": "stdout"
+        }
+      },
+      "categories": {
+        "default": {
+          "appenders": ["stdout"],
+          "level": "debug"
+        }
+      }
+    },
+  
+    "decoder": {
+      "chainName": "Kusama",
+      "specName": "kusams",
+      "blockInterval": 6,
+      "chainProps": {
+        "ss58Format": 2,
+        "tokenDecimals": [12],
+        "tokenSymbol": ["KSM"]
+      }
+    },
+  
+    "orm": [
+      {
+        "name": "scanner",
+        "type": "postgres",
+        "host": "10.1.1.20",
+        "port": 5432,
+        "username": "koushiro",
+        "password": "koushiro123",
+        "database": "kusama-scanner",
+        "logging": true,
+        "entities": ["../postgres-entity/src/**/*.ts"]
+      },
+      {
+        "name": "archive",
+        "type": "postgres",
+        "host": "10.1.1.20",
+        "port": 5432,
+        "username": "koushiro",
+        "password": "koushiro123",
+        "database": "kusama-archive",
+        "logging": true,
+        "entities": ["../postgres-entity/src/archive/**/*.ts"]
+      }
+    ]
+  }
+  
