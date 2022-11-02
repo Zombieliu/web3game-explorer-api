@@ -52,58 +52,19 @@ export class Extrinsic {
 
 @EntityRepository(Extrinsic)
 export class ExtrinsicRepository extends Repository<Extrinsic> {
-  public findManyAndCount({
-    blockNum,
-    extrinsicHash,
-    module,
-    call,
-    isSigned,
-    signer,
-    fromTime,
-    toTime,
+  public findManyAndCount(
+    blockNum?: number,
     offset = defaultOffset,
     limit = maxLimit,
-  }: Partial<
-    {
-      blockNum: number;
-      extrinsicHash: string;
-      module: string;
-      call: string;
-      isSigned: boolean;
-      signer: Uint8Array;
-      fromTime: number;
-      toTime: number;
-    } & PageQueries
-  >): Promise<DataResult<Extrinsic>> {
+): Promise<DataResult<Extrinsic>> {
     let qb = this.createQueryBuilder('extrinsic')
       .orderBy('block_num', 'DESC')
-      .addOrderBy('extrinsic_index', 'ASC')
+      .addOrderBy('extrinsic_num', 'ASC')
       .offset(offset)
       .limit(limit > maxLimit ? maxLimit : limit);
 
     if (!_.isUndefined(blockNum)) {
       qb = qb.andWhere('block_num = :blockNum', { blockNum });
-    }
-    if (extrinsicHash) {
-      qb = qb.andWhere('extrinsic_hash = :extrinsicHash', { extrinsicHash });
-    }
-    if (module) {
-      qb = qb.andWhere('module = :module', { module });
-    }
-    if (call) {
-      qb = qb.andWhere('call = :call', { call });
-    }
-    if (isSigned) {
-      qb = qb.andWhere('is_signed = :isSigned', { isSigned });
-    }
-    if (signer) {
-      qb = qb.andWhere('signer = :signer', { signer });
-    }
-    if (!_.isUndefined(fromTime)) {
-      qb = qb.andWhere('timestamp >= to_timestamp(:fromTime)', { fromTime });
-    }
-    if (!_.isUndefined(toTime)) {
-      qb = qb.andWhere('timestamp <= to_timestamp(:toTime)', { toTime });
     }
 
     // ORM generate count(distinct) sql, which is much slower
@@ -120,13 +81,13 @@ export class ExtrinsicRepository extends Repository<Extrinsic> {
   public findOneByBlockNumAndIndex(blockNum: number, extrinsicIndex: number): Promise<Extrinsic | undefined> {
     return this.createQueryBuilder('extrinsic')
       .where('block_num = :blockNum', { blockNum })
-      .andWhere('extrinsic_index = :extrinsicIndex', { extrinsicIndex })
+      .andWhere('extrinsic_num = :extrinsicIndex', { extrinsicIndex })
       .getOne();
   }
 
   public findOneByExtHash(extrinsicHash: string): Promise<Extrinsic | undefined> {
     return this.createQueryBuilder('extrinsic')
-      .where('extrinsic_num = :extrinsicHash', { extrinsicHash })
+      .where('extrinsic_hash = :extrinsicHash', { extrinsicHash })
       .getOne();
   }
 

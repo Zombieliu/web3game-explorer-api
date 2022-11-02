@@ -38,56 +38,25 @@ export class Event {
 
 @EntityRepository(Event)
 export class EventRepository extends Repository<Event> {
-  public findManyAndCount({
-    blockNum,
-    extrinsicIndex,
-    extrinsicHash,
-    module,
-    event,
-    fromTime,
-    toTime,
+  public findManyAndCount(
+    blockNum?: number,
     offset = defaultOffset,
     limit = maxLimit,
-  }: Partial<
-    {
-      blockNum: number;
-      extrinsicIndex: number;
-      extrinsicHash: string;
-      module: string;
-      event: string;
-      fromTime: number;
-      toTime: number;
-    } & PageQueries
-  >): Promise<DataResult<Event>> {
+  ): Promise<DataResult<Event>> {
     let qb = this.createQueryBuilder();
 
     if (!_.isUndefined(blockNum)) {
       qb = qb.andWhere('block_num = :blockNum', { blockNum });
     }
-    if (!_.isUndefined(extrinsicIndex)) {
-      qb = qb.andWhere('extrinsic_index = :extrinsicIndex', { extrinsicIndex });
-    }
-    if (extrinsicHash) {
-      qb = qb.andWhere('extrinsic_hash = :extrinsicHash', { extrinsicHash });
-    }
-    if (module) {
-      qb = qb.andWhere('module = :module', { module });
-    }
-    if (event) {
-      qb = qb.andWhere('event = :event', { event });
-    }
-    if (!_.isUndefined(fromTime)) {
-      qb = qb.andWhere('timestamp >= to_timestamp(:fromTime)', { fromTime });
-    }
-    if (!_.isUndefined(toTime)) {
-      qb = qb.andWhere('timestamp <= to_timestamp(:toTime)', { toTime });
-    }
+    // if (!_.isUndefined(extrinsicIndex)) {
+    //   qb = qb.andWhere('extrinsic_index = :extrinsicIndex', { extrinsicIndex });
+    // }
 
     return qb
       .orderBy('block_num', 'DESC')
       .addOrderBy('event_index', 'ASC')
-      .offset(offset)
-      .limit(limit > maxLimit ? maxLimit : limit)
+      .skip(offset)
+      .take(limit > maxLimit ? maxLimit : limit)
       .getManyAndCount()
       .then(([entites, count]) => {
         return {

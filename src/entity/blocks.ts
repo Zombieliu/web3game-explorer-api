@@ -31,28 +31,14 @@ export class Block {
 
 @EntityRepository(Block)
 export class BlockRepository extends Repository<Block> {
-  public findManyAndCount({
-    fromTime,
-    toTime,
+  public findManyAndCount(
     offset = defaultOffset,
     limit = maxLimit,
-  }: Partial<
-    {
-      fromTime: number;
-      toTime: number;
-    } & PageQueries
-  >): Promise<DataResult<Block>> {
+  ): Promise<DataResult<Block>> {
     let qb = this.createQueryBuilder('block')
       .orderBy('block_num', 'DESC')
-      .offset(offset)
-      .limit(limit > maxLimit ? maxLimit : limit);
-
-    if (!_.isUndefined(fromTime)) {
-      qb = qb.andWhere('timestamp >= to_timestamp(:fromTime)', { fromTime });
-    }
-    if (!_.isUndefined(toTime)) {
-      qb = qb.andWhere('timestamp <= to_timestamp(:toTime)', { toTime });
-    }
+      .skip(offset)
+      .take(limit > maxLimit ? maxLimit : limit);
 
     // ORM generate count(distinct) sql, which is much slower
     const count = qb.getCount();

@@ -70,7 +70,7 @@ export interface ServiceType {
 }
 
 export const serviceProto: ServiceProto<ServiceType> = {
-    "version": 10,
+    "version": 12,
     "services": [
         {
             "id": 4,
@@ -158,6 +158,23 @@ export const serviceProto: ServiceProto<ServiceType> = {
                         "target": "base/BaseRequest"
                     }
                 }
+            ],
+            "properties": [
+                {
+                    "id": 0,
+                    "name": "pageIndex",
+                    "type": {
+                        "type": "Number"
+                    }
+                },
+                {
+                    "id": 1,
+                    "name": "limit",
+                    "type": {
+                        "type": "Number"
+                    },
+                    "optional": true
+                }
             ]
         },
         "base/BaseRequest": {
@@ -171,6 +188,15 @@ export const serviceProto: ServiceProto<ServiceType> = {
                     "type": {
                         "type": "Reference",
                         "target": "base/BaseResponse"
+                    }
+                }
+            ],
+            "properties": [
+                {
+                    "id": 0,
+                    "name": "content",
+                    "type": {
+                        "type": "String"
                     }
                 }
             ]
@@ -244,6 +270,31 @@ export const serviceProto: ServiceProto<ServiceType> = {
                         "target": "base/BaseRequest"
                     }
                 }
+            ],
+            "properties": [
+                {
+                    "id": 0,
+                    "name": "blockNum",
+                    "type": {
+                        "type": "Number"
+                    },
+                    "optional": true
+                },
+                {
+                    "id": 1,
+                    "name": "pageIndex",
+                    "type": {
+                        "type": "Number"
+                    }
+                },
+                {
+                    "id": 2,
+                    "name": "limit",
+                    "type": {
+                        "type": "Number"
+                    },
+                    "optional": true
+                }
             ]
         },
         "event/PtlGetAll/ResGetAll": {
@@ -254,6 +305,15 @@ export const serviceProto: ServiceProto<ServiceType> = {
                     "type": {
                         "type": "Reference",
                         "target": "base/BaseResponse"
+                    }
+                }
+            ],
+            "properties": [
+                {
+                    "id": 0,
+                    "name": "content",
+                    "type": {
+                        "type": "String"
                     }
                 }
             ]
@@ -422,6 +482,31 @@ export const serviceProto: ServiceProto<ServiceType> = {
                         "target": "base/BaseRequest"
                     }
                 }
+            ],
+            "properties": [
+                {
+                    "id": 0,
+                    "name": "blockNum",
+                    "type": {
+                        "type": "Number"
+                    },
+                    "optional": true
+                },
+                {
+                    "id": 1,
+                    "name": "pageIndex",
+                    "type": {
+                        "type": "Number"
+                    }
+                },
+                {
+                    "id": 2,
+                    "name": "limit",
+                    "type": {
+                        "type": "Number"
+                    },
+                    "optional": true
+                }
             ]
         },
         "extrinsic/PtlGetAll/ResGetAll": {
@@ -432,6 +517,15 @@ export const serviceProto: ServiceProto<ServiceType> = {
                     "type": {
                         "type": "Reference",
                         "target": "base/BaseResponse"
+                    }
+                }
+            ],
+            "properties": [
+                {
+                    "id": 0,
+                    "name": "content",
+                    "type": {
+                        "type": "String"
                     }
                 }
             ]
