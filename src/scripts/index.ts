@@ -81,23 +81,31 @@ const extrinsic_process = async (block_number:number,api:any) => {
   const signedBlock = await api.rpc.chain.getBlock(blockHash);
   const block_hash:string = signedBlock.block.header.hash.toString();
   const extrinsics = signedBlock.block.extrinsics;
+  const moment = signedBlock.block.extrinsics[0].args[0] as Compact<Moment>;
+  const utc_time = new Date(moment.toNumber());
+
+  const extrinsicEntities: Extrinsic[] = [];
 
   for (const [extrinsic_index, extrinsic] of extrinsics.entries()) {
-    const moment = signedBlock.block.extrinsics[0].args[0] as Compact<Moment>;
-    const utc_time = new Date(moment.toNumber());
 
     const isSigned = extrinsic.isSigned;
     const extrinsic_hash:string = extrinsic.hash.toString();
     const extrinsic_info = extrinsic.toHuman().method;
 
-    if (!isSigned){
-      const nonce = '';
-      const signature = '';
-      const signer = '';
-      const tip = '';
-      const bytes = extrinsic.toHex().toString();
-      const weight_info:string = (await api.rpc.payment.queryInfo(bytes, blockHash)).toString();
-     
+    let nonce = '';
+    let signature = '';
+    let signer = '';
+    let tip = '';
+
+    if (isSigned){
+      nonce = extrinsic.nonce.toString();
+      signature = extrinsic.signature.toString();
+      signer = extrinsic.signer.toString();
+      tip = extrinsic.tip.toString();
+    }
+
+    let bytes = extrinsic.toHex().toString();
+    let weight_info:string = (await api.rpc.payment.queryInfo(bytes, blockHash)).toString();
       const extrinsic_data = new Extrinsic();
       extrinsic_data.block_num = block_num;
       extrinsic_data.block_hash = block_hash;
@@ -118,116 +126,87 @@ const extrinsic_process = async (block_number:number,api:any) => {
       extrinsic_data.timestamp = utc_time;
       extrinsic_data.weight_info = weight_info;
 
-      console.log(extrinsic.success)
       extrinsic_data.meta = extrinsic.meta.toString();
+      extrinsic_data.success = false
 
-    // check result of extrinsic and calculate weight
-    if (extrinsic_data.section === 'timestamp' && extrinsic_data.method === 'set') {
-      extrinsic_data.success = true
-    } else {
-      extrinsic_data.success = extrinsic.success;
-    }
-
-      try {
-        await getRepository(Extrinsic).insert(extrinsic_data);
-      } catch (e) {
-        await getRepository(Extrinsic).save(extrinsic_data);
-      }
+      extrinsicEntities.push(extrinsic_data)
+      // try {
+      //   await getRepository(Extrinsic).insert(extrinsic_data);
+      // } catch (e) {
+      //   await getRepository(Extrinsic).save(extrinsic_data);
+      // }
       console.log(`Extrinsic: ${extrinsic_data.block_num}-${extrinsic_data.extrinsic_num} : ${extrinsic_data.section}.${extrinsic_data.method}(${extrinsic_data.args})`);
-      
-    }else{
-      const nonce:string = extrinsic.nonce.toString();
-      const signature:string = extrinsic.signature.toString();
-      const signer:string = extrinsic.signer.toString();
-      const tip:string = extrinsic.tip.toString();
-      const bytes:string = extrinsic.toHex().toString();
-      const weight_info:string = (await api.rpc.payment.queryInfo(bytes, blockHash)).toString();
-
-      const extrinsic_data = new Extrinsic();
-      extrinsic_data.block_num = block_num;
-      extrinsic_data.block_hash = block_hash;
-      extrinsic_data.extrinsic_num = extrinsic_index.toString();
-      extrinsic_data.extrinsic_hash = extrinsic_hash;
-      extrinsic_data.section = extrinsic_info.section;
-      extrinsic_data.method = extrinsic_info.method;
-      if (extrinsic_info.args==undefined){
-        extrinsic_data.args = "";      
-      } else {
-        extrinsic_data.args = JSON.stringify(extrinsic_info.args)
-      }
-      extrinsic_data.nonce = nonce;
-      extrinsic_data.signature = signature;
-      extrinsic_data.signer = signer;
-      extrinsic_data.is_signed = isSigned;
-      extrinsic_data.tip = tip;
-      extrinsic_data.timestamp = utc_time;
-      extrinsic_data.weight_info = weight_info;
-
-      console.log(extrinsic.success)
-      extrinsic_data.meta = extrinsic.meta.toString();
-    // check result of extrinsic and calculate weight
-    if (extrinsic_data.section === 'timestamp' && extrinsic_data.method === 'set') {
-      extrinsic_data.success = true
-    } else {
-      extrinsic_data.success = extrinsic.success;
-    }
-
-
-      try {
-        await getRepository(Extrinsic).insert(extrinsic_data);
-      } catch (e) {
-        await getRepository(Extrinsic).save(extrinsic_data);
-      }
-      console.log(`Extrinsic: ${extrinsic_data.block_num}-${extrinsic_data.extrinsic_num} : ${extrinsic_data.section}.${extrinsic_data.method}(${extrinsic_data.args})`);
-    }
   }
-};
 
-const events_process = async (block_number:number,api:any) =>{
-  const block_num = block_number;
-  const blockHash = await api.rpc.chain.getBlockHash(block_number);
-  const signedBlock = await api.rpc.chain.getBlock(blockHash);
-  const block_hash:string = signedBlock.block.header.hash.toString();
+  const eventEntities: Event[] = [];
 
-  const moment = signedBlock.block.extrinsics[0].args[0] as Compact<Moment>;
-  const utc_time = new Date(moment.toNumber());
-  console.log("----------------")
   const events = await api.query.system.events.at(blockHash);
   for (const [event_index, event] of events.entries()) {
     const { event: { data, section, method }, idx } = event;
 
-    const [phase, event_info] = [event.toHuman().phase, event.toHuman().event];
+    const phase = event.phase;
 
-    const event_data = new Event();
-    event_data.block_num = block_num;
-    event_data.block_hash = block_hash;
-    event_data.event_index = event_index.toString();
-    event_data.section = section;
-    event_data.method = method;
+    const eventEntity = new Event();
+    eventEntity.block_num = block_num;
+    eventEntity.block_hash = block_hash;
+    eventEntity.event_index = event_index.toString();
+    eventEntity.section = section;
+    eventEntity.method = method;
+    eventEntity.timestamp = utc_time;
+    eventEntity.rawType= data.toRawType()
+    eventEntity.data = data.toString()
+    let extIndex = 0;
+
     if (!phase.isApplyExtrinsic) {
-      event_data.extrinsic_hash = null;
-      event_data.extrinsic_index = null;
-      event_data.signer = ""
+        const extrinsicHash = signedBlock.block.extrinsics[extIndex].hash;
+        eventEntity.extrinsic_hash = signedBlock.block.extrinsics[extIndex].hash;
+        eventEntity.extrinsic_index = extIndex;
+        eventEntity.signer = ""
+        eventEntities.push(eventEntity);
+        continue;
     } else {
-      const extIndex = phase.ApplyExtrinsic;
-      event_data.extrinsic_hash = signedBlock.block.extrinsics[extIndex].hash;
-      event_data.extrinsic_index = extIndex;
-      event_data.signer = signedBlock.block.extrinsics[extIndex].signer.toString()
-    } 
-    event_data.rawType= data.toRawType()
-    event_data.data = data.toString()
-    // if (event_info.args==undefined){
-    //   event_data.args = "";      
-    // } else {
-    //   event_data.args = JSON.stringify(event_info.args)
-    // }
-    event_data.timestamp = utc_time;
-    try {
-      await getRepository(Event).insert(event_data);
-    } catch (e) {
-      await getRepository(Event).save(event_data);
+        extIndex = phase.asApplyExtrinsic.toNumber();
+        eventEntity.extrinsic_hash = signedBlock.block.extrinsics[extIndex].hash;
+        eventEntity.extrinsic_index = extIndex;
+        eventEntity.signer = signedBlock.block.extrinsics[extIndex].signer.toString()
     }
-    console.log(`Event: ${event_data.block_num}-${event_data.event_index} : ${event_data.section}.${event_data.method}(${event_data.data})`);
+
+    console.log(`Event: ${eventEntity.block_num}-${eventEntity.event_index} : ${eventEntity.section}.${eventEntity.method}(${eventEntity.data})`);
+
+    eventEntities.push(eventEntity);
+    // check result of extrinsic and calculate weight
+    if (section === 'system' && method === 'ExtrinsicSuccess') {
+      extrinsicEntities[extIndex].success = true;
+      console.debug(`Extrinsic ${eventEntity.block_num}-${extIndex} success`);
+    }
+    if (section === 'system' && event.method === 'ExtrinsicFailed') {
+      console.debug(`Extrinsic ${eventEntity.block_num}-${extIndex} fail`);
+    }
+    
+    // // calculate the fee of extrinsic
+    // const extrinsicId = `${eventEntity.block_num}-${extIndex}`;
+    // if (section === 'treasury' && event.method === 'Deposit') {
+    //   const toTreasury = event.data[0] as Balance; // treasury.Deposit(Balance)
+    //   extFees[extIndex].toTreasury(toTreasury);
+    //   log.debug(`Extrinsic ${extrinsicId} to treasury fee: ${toTreasury}`);
+    // }
+    // if (event.section === 'balances' && event.method === 'Deposit') {
+    //   const toAuthor = event.data[1] as Balance; // balances.Deposit(AccountId, Balance)
+    //   extFees[extIndex].toAuthor(toAuthor);
+    //   log.debug(`Extrinsic ${extrinsicId} to author fee: ${toAuthor}`);
+    // }
+            
+  }
+
+  try {
+    await getRepository(Extrinsic).insert(extrinsicEntities);
+  } catch (e) {
+    await getRepository(Extrinsic).save(extrinsicEntities);
+  }
+  try {
+    await getRepository(Event).insert(eventEntities);
+  } catch (e) {
+    await getRepository(Event).save(eventEntities);
   }
 };
 
@@ -241,7 +220,7 @@ const latest_block_num_check = async (api:any) => {
 const start_progress = async (start_block:number,api:any) =>{
   await blocks_process(start_block,api);
   await extrinsic_process(start_block,api);
-  await events_process(start_block,api);
+  // await events_process(start_block,api);
 };
 
 const loop_check = async (api:any) => {
