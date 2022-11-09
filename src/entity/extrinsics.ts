@@ -28,6 +28,9 @@ export class Extrinsic {
     args!: string;
 
     @Column()
+    meta!: string
+
+    @Column()
     nonce!: string;
 
     @Column()
@@ -38,6 +41,9 @@ export class Extrinsic {
 
     @Column()
     is_signed!: Boolean;
+
+    @Column()
+    success!: boolean
 
     @Column()
     tip!: string;
@@ -91,6 +97,11 @@ export class ExtrinsicRepository extends Repository<Extrinsic> {
       .getOne();
   }
 
+  public findCountByBlockNum(blockNum: number): Promise<number> {
+    return this.createQueryBuilder('extrinsic')
+      .where('block_num = :blockNum', { blockNum })
+      .getCount();
+  }
 
   public findSignerCount({
     fromTime,

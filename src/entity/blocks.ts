@@ -27,6 +27,13 @@ export class Block {
 
     @Column()
     timestamp!: Date;
+
+    @Column()
+    eventNum!: number
+
+    @Column()
+    extrinsicNum!: number
+
 }
 
 @EntityRepository(Block)

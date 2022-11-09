@@ -11,17 +11,14 @@ export class Event {
     @Column()
     block_hash!: string;
 
-    @Column()
-    extrinsic_num!: string;
-
     @PrimaryColumn()
     event_index!: string;
+    
+    @Column({ type: 'bytea', nullable: true })
+    extrinsic_hash: Buffer | null = null;
 
-    // @Column({ nullable: true })
-    // extrinsic_hash: string | null = null;
-
-    // @Column({ nullable: true })
-    // extrinsic_index: number | null = null;
+    @Column({ type: 'integer', nullable: true })
+    extrinsic_index: number | null = null;
 
     @Column()
     section!: string;
@@ -30,7 +27,13 @@ export class Event {
     method!: string;
 
     @Column()
-    args!: string;
+    rawType!: string;
+
+    @Column()
+    data!: string;
+
+    @Column()
+    signer!: string;
 
     @Column()
     timestamp!: Date;
@@ -66,11 +69,11 @@ export class EventRepository extends Repository<Event> {
       });
   }
 
-  public findOneByBlockNumAndIndex(blockNum: number, eventIndex: number): Promise<Event | undefined> {
+  public findOneByBlockNumAndIndex(blockNum: number, eventIndex: number): Promise<Event[] | undefined> {
     return this.createQueryBuilder('event')
       .where('block_num = :blockNum', { blockNum })
       .andWhere('event_index = :eventIndex', { eventIndex })
-      .getOne();
+      .getMany();
   }
 
   public findByExt(blockNum: number, extrinsicIndex: number): Promise<Event[] | undefined> {
@@ -100,6 +103,11 @@ export class EventRepository extends Repository<Event> {
       .getMany();
   }
 
+  public findCountByBlockNum(blockNum: number): Promise<number> {
+    return this.createQueryBuilder('event')
+      .where('block_num = :blockNum', { blockNum })
+      .getCount();
+  }
 
   public findCount({
     module,
