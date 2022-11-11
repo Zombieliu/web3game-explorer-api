@@ -33,7 +33,6 @@ export class Block {
 
     @Column()
     extrinsicNum!: number
-
 }
 
 @EntityRepository(Block)

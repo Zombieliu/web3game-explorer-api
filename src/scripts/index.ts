@@ -5,7 +5,11 @@ import 'reflect-metadata';
 import { Block } from '../entity/blocks';
 import { Extrinsic } from '../entity/extrinsics';
 import { Event } from '../entity/events';
+import { AccountTransfer } from '../entity/account_transfer';
+
 import { getRepository, createConnection } from 'typeorm';
+
+import { AccountTransferScript } from './account_transfer';
 
 const blocks_process = async (block_number:number,api:any)=>{
   if (block_number === 0){
@@ -130,11 +134,7 @@ const extrinsic_process = async (block_number:number,api:any) => {
       extrinsic_data.success = false
 
       extrinsicEntities.push(extrinsic_data)
-      // try {
-      //   await getRepository(Extrinsic).insert(extrinsic_data);
-      // } catch (e) {
-      //   await getRepository(Extrinsic).save(extrinsic_data);
-      // }
+
       console.log(`Extrinsic: ${extrinsic_data.block_num}-${extrinsic_data.extrinsic_num} : ${extrinsic_data.section}.${extrinsic_data.method}(${extrinsic_data.args})`);
   }
 
@@ -175,6 +175,7 @@ const extrinsic_process = async (block_number:number,api:any) => {
 
     eventEntities.push(eventEntity);
     // check result of extrinsic and calculate weight
+    
     if (section === 'system' && method === 'ExtrinsicSuccess') {
       extrinsicEntities[extIndex].success = true;
       console.debug(`Extrinsic ${eventEntity.block_num}-${extIndex} success`);
@@ -182,7 +183,9 @@ const extrinsic_process = async (block_number:number,api:any) => {
     if (section === 'system' && event.method === 'ExtrinsicFailed') {
       console.debug(`Extrinsic ${eventEntity.block_num}-${extIndex} fail`);
     }
-    
+
+    await AccountTransferScript(event, signedBlock);
+
     // // calculate the fee of extrinsic
     // const extrinsicId = `${eventEntity.block_num}-${extIndex}`;
     // if (section === 'treasury' && event.method === 'Deposit') {
@@ -219,7 +222,9 @@ const latest_block_num_check = async (api:any) => {
 
 const start_progress = async (start_block:number,api:any) =>{
   await blocks_process(start_block,api);
-  await extrinsic_process(start_block,api);
+  if (start_block > 0) {
+    await extrinsic_process(start_block,api);
+  }
   // await events_process(start_block,api);
 };
 
@@ -263,7 +268,7 @@ const start_query_block_chain = async () => {
     password: "postgres",
     database: "postgres",
     entities: [
-        Block, Extrinsic, Event
+        Block, Extrinsic, Event, AccountTransfer
     ],
     synchronize: true,
     logging: false
