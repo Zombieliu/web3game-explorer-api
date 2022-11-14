@@ -27,9 +27,6 @@ export class Event {
     method!: string;
 
     @Column()
-    rawType!: string;
-
-    @Column()
     data!: string;
 
     @Column()
