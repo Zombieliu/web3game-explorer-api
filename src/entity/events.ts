@@ -14,8 +14,8 @@ export class Event {
     @PrimaryColumn()
     event_index!: string;
     
-    @Column({ nullable: true })
-    extrinsic_hash: string | null = null;
+    @Column({ type: 'bytea', nullable: true })
+    extrinsic_hash: Buffer | null = null;
 
     @Column({ type: 'integer', nullable: true })
     extrinsic_index: number | null = null;
@@ -31,6 +31,9 @@ export class Event {
 
     @Column()
     data!: string;
+
+    @Column()
+    meta!: string;
 
     @Column()
     signer!: string;

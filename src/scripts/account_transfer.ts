@@ -13,6 +13,8 @@ export async function AccountTransferScript(event: any, block: any, eventIdx: an
         const extIndex = phase.asApplyExtrinsic.toNumber();
         const moment = block.block.extrinsics[0].args[0] as Compact<Moment>;
 
+        const eventData = event.event;
+
         let accTranEntity = new AccountTransfer()
 
         accTranEntity.blockNum = block.block.header.number.toNumber();

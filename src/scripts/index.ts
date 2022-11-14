@@ -146,7 +146,6 @@ const extrinsic_process = async (block_number:number,api:any) => {
     const { event: { data, section, method }, idx } = event;
 
     const phase = event.phase;
-
     const eventEntity = new Event();
     eventEntity.block_num = block_num;
     eventEntity.block_hash = block_hash;
@@ -154,8 +153,9 @@ const extrinsic_process = async (block_number:number,api:any) => {
     eventEntity.section = section;
     eventEntity.method = method;
     eventEntity.timestamp = utc_time;
-    eventEntity.rawType= data.toRawType()
+    eventEntity.meta= data.meta.toString()
     eventEntity.data = data.toString()
+
     let extIndex = 0;
 
     if (!phase.isApplyExtrinsic) {
