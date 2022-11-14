@@ -10,6 +10,7 @@ import { AccountTransfer } from '../entity/account_transfer';
 import { getRepository, createConnection } from 'typeorm';
 
 import { AccountTransferScript } from './account_transfer';
+import { TokenNonFungibleScript } from './token_non_fungible';
 
 const blocks_process = async (block_number:number,api:any)=>{
   if (block_number === 0){
@@ -158,7 +159,6 @@ const extrinsic_process = async (block_number:number,api:any) => {
     let extIndex = 0;
 
     if (!phase.isApplyExtrinsic) {
-        const extrinsicHash = signedBlock.block.extrinsics[extIndex].hash;
         eventEntity.extrinsic_hash = signedBlock.block.extrinsics[extIndex].hash;
         eventEntity.extrinsic_index = extIndex;
         eventEntity.signer = ""
@@ -184,7 +184,8 @@ const extrinsic_process = async (block_number:number,api:any) => {
       console.debug(`Extrinsic ${eventEntity.block_num}-${extIndex} fail`);
     }
 
-    await AccountTransferScript(event, signedBlock);
+    await AccountTransferScript(event, signedBlock, event_index);
+    // await TokenNonFungibleScript(event, signedBlock);
 
     // // calculate the fee of extrinsic
     // const extrinsicId = `${eventEntity.block_num}-${extIndex}`;
