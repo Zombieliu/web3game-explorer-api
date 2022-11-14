@@ -159,14 +159,14 @@ const extrinsic_process = async (block_number:number,api:any) => {
     let extIndex = 0;
 
     if (!phase.isApplyExtrinsic) {
-        eventEntity.extrinsic_hash = signedBlock.block.extrinsics[extIndex].hash;
+        eventEntity.extrinsic_hash = signedBlock.block.extrinsics[extIndex].hash.toString();
         eventEntity.extrinsic_index = extIndex;
         eventEntity.signer = ""
         eventEntities.push(eventEntity);
         continue;
     } else {
         extIndex = phase.asApplyExtrinsic.toNumber();
-        eventEntity.extrinsic_hash = signedBlock.block.extrinsics[extIndex].hash;
+        eventEntity.extrinsic_hash = signedBlock.block.extrinsics[extIndex].hash.toString();
         eventEntity.extrinsic_index = extIndex;
         eventEntity.signer = signedBlock.block.extrinsics[extIndex].signer.toString()
     }
