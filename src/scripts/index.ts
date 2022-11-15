@@ -77,7 +77,7 @@ const blocks_process = async (block_number:number,api:any)=>{
       await getRepository(Block).save(block);
     }
     console.log(`Block: ${block.block_num}.`);
-  
+
   }
 };
 const extrinsic_process = async (block_number:number,api:any) => {
@@ -119,7 +119,7 @@ const extrinsic_process = async (block_number:number,api:any) => {
       extrinsic_data.section = extrinsic_info.section;
       extrinsic_data.method = extrinsic_info.method;
       if (extrinsic_info.args==undefined){
-        extrinsic_data.args = "";      
+        extrinsic_data.args = "";
       } else {
         extrinsic_data.args = JSON.stringify(extrinsic_info.args)
       }
@@ -175,7 +175,7 @@ const extrinsic_process = async (block_number:number,api:any) => {
 
     eventEntities.push(eventEntity);
     // check result of extrinsic and calculate weight
-    
+
     if (section === 'system' && method === 'ExtrinsicSuccess') {
       extrinsicEntities[extIndex].success = true;
       console.debug(`Extrinsic ${eventEntity.block_num}-${extIndex} success`);
@@ -199,7 +199,7 @@ const extrinsic_process = async (block_number:number,api:any) => {
     //   extFees[extIndex].toAuthor(toAuthor);
     //   log.debug(`Extrinsic ${extrinsicId} to author fee: ${toAuthor}`);
     // }
-            
+
   }
 
   try {
@@ -256,17 +256,14 @@ const loop_start_process = async (last_block_num: number,latest_block_num: numbe
 };
 
 const start_query_block_chain = async () => {
-  const wsProvider = new WsProvider('ws://127.0.0.1:9944');
+  const wsProvider = new WsProvider('wss://devnet.web3games.org');
   const api = await ApiPromise.create({ provider: wsProvider });
-  // AppDataSource.initialize().then(async () => {
-  // });
-
   createConnection({
     type: "postgres",
     host: "localhost",
     port: 5432,
     username: "postgres",
-    password: "postgres",
+    password: "123456",
     database: "postgres",
     entities: [
         Block, Extrinsic, Event, AccountTransfer
