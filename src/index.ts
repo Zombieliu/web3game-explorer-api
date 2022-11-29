@@ -23,29 +23,9 @@ export const server = new WsServer(serviceProto, {
 
 // Initialize before server start
 async function init() {
-    createConnection({
-        type: "postgres",
-        host: "localhost",
-        port: 5432,
-        username: "postgres",
-        password: "postgres",
-        database: "postgres",
-        entities: [
-            Block, Extrinsic, Event
-        ],
-        synchronize: true,
-        logging: false
-    }).then(connection => {
-        console.log("Sync Server Connect PostgreSQL Successed!");
-        // here you can start to work with your entities
-    }).catch(error => console.log(error));
-    
-
     await server.autoImplementApi(path.resolve(__dirname, 'api'));
     await apiServer.autoImplementApi(path.resolve(__dirname, 'api'));
 
-    // TODO
-    // Prepare something... (e.g. connect the db)
 };
 
 // Entry function
