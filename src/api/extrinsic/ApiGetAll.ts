@@ -10,21 +10,22 @@ export default async function (call: ApiCall<ReqGetAll, ResGetAll>) {
     console.log("=================================== 1");
 
     let blockNum = call.req.blockNum;
+    let signer = call.req.signer;
     let pageIndex = call.req.pageIndex;
     let limit = call.req.limit;
     console.log("=================================== 2");
     console.log(pageIndex);
     console.log(limit);
     // const block = await AppDataSource.manager.getCustomRepository(BlockRepository).findOneByNum(blockNum);
-    const event = await getCustomRepository(ExtrinsicRepository).findManyAndCount(blockNum, pageIndex, limit);
+    const ext = await getCustomRepository(ExtrinsicRepository).findManyAndCount(blockNum, signer, pageIndex, limit);
     console.log("=================================== 3");
-    if (event == undefined) {
+    if (ext == undefined) {
         call.succ({
             content: ""
         })
     } else {
         call.succ({
-            content: JSON.stringify(event)
+            content: JSON.stringify(ext)
         })
     }
 }

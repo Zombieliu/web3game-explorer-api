@@ -5,12 +5,15 @@ import 'reflect-metadata';
 import { Block } from '../entity/blocks';
 import { Extrinsic } from '../entity/extrinsics';
 import { Event } from '../entity/events';
-import { AccountTransfer } from '../entity/account_transfer';
+import { AccountTransfer } from '../entity/balance/balance_transfer';
+import { TokenNonFungible } from '../entity/token_non_fungible/token_non_fungible';
+import { TokenNonFungibleCreated } from '../entity/token_non_fungible/token_non_fungible_created';
+import { TokenNonFungibleTransfer } from '../entity/token_non_fungible/token_non_fungible_transfer';
 
 import { getRepository, createConnection } from 'typeorm';
 
-import { AccountTransferScript } from './account_transfer';
-import { TokenNonFungibleScript } from './token_non_fungible';
+import { AccountTransferScript } from './balance/balance_transfer';
+import { TokenNonFungibleTokenCreatedScript, TokenNonFungibleTokenTransferScript, TokenNonFungibleScript } from './token_non_fungible/token_non_fungible';
 
 const blocks_process = async (block_number:number,api:any)=>{
   if (block_number === 0){
@@ -185,8 +188,9 @@ const extrinsic_process = async (block_number:number,api:any) => {
     }
 
     await AccountTransferScript(event, signedBlock, event_index);
-    // await TokenNonFungibleScript(event, signedBlock);
-
+    await TokenNonFungibleTokenCreatedScript(event, signedBlock, event_index);
+    await TokenNonFungibleTokenTransferScript(event, signedBlock, event_index);
+    await TokenNonFungibleScript(event, signedBlock, event_index);
     // // calculate the fee of extrinsic
     // const extrinsicId = `${eventEntity.block_num}-${extIndex}`;
     // if (section === 'treasury' && event.method === 'Deposit') {
@@ -199,7 +203,6 @@ const extrinsic_process = async (block_number:number,api:any) => {
     //   extFees[extIndex].toAuthor(toAuthor);
     //   log.debug(`Extrinsic ${extrinsicId} to author fee: ${toAuthor}`);
     // }
-
   }
 
   try {
@@ -256,7 +259,8 @@ const loop_start_process = async (last_block_num: number,latest_block_num: numbe
 };
 
 const start_query_block_chain = async () => {
-  const wsProvider = new WsProvider('wss://devnet.web3games.org');
+  // const wsProvider = new WsProvider('wss://devnet.web3games.org');
+  const wsProvider = new WsProvider('ws://127.0.0.1:9944');
   const api = await ApiPromise.create({ provider: wsProvider });
   createConnection({
     type: "postgres",
@@ -266,10 +270,10 @@ const start_query_block_chain = async () => {
     password: "123456",
     database: "postgres",
     entities: [
-        Block, Extrinsic, Event, AccountTransfer
+        Block, Extrinsic, Event, AccountTransfer, TokenNonFungibleCreated, TokenNonFungibleTransfer, TokenNonFungible
     ],
     synchronize: true,
-    logging: false
+    logging: true
 }).then(async (connection) => {
     console.log("TsRPC Connect PostgreSQL Successed!");
 

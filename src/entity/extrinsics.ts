@@ -60,17 +60,22 @@ export class Extrinsic {
 export class ExtrinsicRepository extends Repository<Extrinsic> {
   public findManyAndCount(
     blockNum?: number,
+    signer?: string,
     offset = defaultOffset,
     limit = maxLimit,
 ): Promise<DataResult<Extrinsic>> {
     let qb = this.createQueryBuilder('extrinsic')
       .orderBy('block_num', 'DESC')
       .addOrderBy('extrinsic_num', 'ASC')
-      .offset(offset)
-      .limit(limit > maxLimit ? maxLimit : limit);
+      .skip(offset)
+      .take(limit > maxLimit ? maxLimit : limit);
 
     if (!_.isUndefined(blockNum)) {
       qb = qb.andWhere('block_num = :blockNum', { blockNum });
+    }
+
+    if (!_.isUndefined(signer)) {
+      qb = qb.andWhere('signer = :signer', { signer });
     }
 
     // ORM generate count(distinct) sql, which is much slower

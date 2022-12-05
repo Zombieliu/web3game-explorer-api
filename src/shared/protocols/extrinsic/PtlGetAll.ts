@@ -2,7 +2,8 @@ import { BaseRequest, BaseResponse, BaseConf } from "../base";
 
 export interface ReqGetAll extends BaseRequest {
     blockNum?: number,
-    pageIndex: number
+    signer?: string,
+    pageIndex?: number
     limit?: number
 }
 

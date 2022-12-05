@@ -1,4 +1,5 @@
 import { ServiceProto } from 'tsrpc-proto';
+import { ReqGetBalanceTransfer, ResGetBalanceTransfer } from './account/PtlGetBalanceTransfer';
 import { ReqGetAll, ResGetAll } from './block/PtlGetAll';
 import { ReqGetBy, ResGetBy } from './block/PtlGetBy';
 import { ReqGetAll as ReqGetAll_1, ResGetAll as ResGetAll_1 } from './event/PtlGetAll';
@@ -9,12 +10,17 @@ import { ReqGetAll as ReqGetAll_2, ResGetAll as ResGetAll_2 } from './extrinsic/
 import { ReqGetByBlockNumAndIndex as ReqGetByBlockNumAndIndex_1, ResGetByBlockNumAndIndex as ResGetByBlockNumAndIndex_1 } from './extrinsic/PtlGetByBlockNumAndIndex';
 import { ReqGetByExtHash, ResGetByExtHash } from './extrinsic/PtlGetByExtHash';
 import { MsgChat } from './MsgChat';
-import { ReqBlock, ResBlock } from './PtlBlock';
-import { ReqEvent, ResEvent } from './PtlEvent';
 import { ReqSend, ResSend } from './PtlSend';
+import { ReqGetNonFunIdDetail, ResGetNonFunIdDetail } from './tokenNonFungible/PtlGetNonFunIdDetail';
+import { ReqListNftTransfer, ResListNftTransfer } from './tokenNonFungible/PtlListNftTransfer';
+import { ReqListOwnerNFT, ResListOwnerNFT } from './tokenNonFungible/PtlListOwnerNFT';
 
 export interface ServiceType {
     api: {
+        "account/GetBalanceTransfer": {
+            req: ReqGetBalanceTransfer,
+            res: ResGetBalanceTransfer
+        },
         "block/GetAll": {
             req: ReqGetAll,
             res: ResGetAll
@@ -51,17 +57,21 @@ export interface ServiceType {
             req: ReqGetByExtHash,
             res: ResGetByExtHash
         },
-        "Block": {
-            req: ReqBlock,
-            res: ResBlock
-        },
-        "Event": {
-            req: ReqEvent,
-            res: ResEvent
-        },
         "Send": {
             req: ReqSend,
             res: ResSend
+        },
+        "tokenNonFungible/GetNonFunIdDetail": {
+            req: ReqGetNonFunIdDetail,
+            res: ResGetNonFunIdDetail
+        },
+        "tokenNonFungible/ListNftTransfer": {
+            req: ReqListNftTransfer,
+            res: ResListNftTransfer
+        },
+        "tokenNonFungible/ListOwnerNFT": {
+            req: ReqListOwnerNFT,
+            res: ResListOwnerNFT
         }
     },
     msg: {
@@ -70,85 +80,99 @@ export interface ServiceType {
 }
 
 export const serviceProto: ServiceProto<ServiceType> = {
-    "version": 14,
+    "version": 4,
     "services": [
         {
-            "id": 4,
+            "id": 12,
+            "name": "account/GetBalanceTransfer",
+            "type": "api",
+            "conf": {}
+        },
+        {
+            "id": 1,
             "name": "block/GetAll",
             "type": "api",
             "conf": {}
         },
         {
-            "id": 13,
+            "id": 2,
             "name": "block/GetBy",
             "type": "api",
             "conf": {}
         },
         {
-            "id": 6,
+            "id": 3,
             "name": "event/GetAll",
             "type": "api",
             "conf": {}
         },
         {
-            "id": 14,
+            "id": 4,
             "name": "event/GetByBlock",
             "type": "api",
             "conf": {}
         },
         {
-            "id": 7,
+            "id": 5,
             "name": "event/GetByBlockNumAndIndex",
             "type": "api",
             "conf": {}
         },
         {
-            "id": 15,
+            "id": 6,
             "name": "event/GetByExt",
             "type": "api",
             "conf": {}
         },
         {
-            "id": 9,
+            "id": 7,
             "name": "extrinsic/GetAll",
             "type": "api",
             "conf": {}
         },
         {
-            "id": 10,
+            "id": 8,
             "name": "extrinsic/GetByBlockNumAndIndex",
             "type": "api",
             "conf": {}
         },
         {
-            "id": 11,
+            "id": 9,
             "name": "extrinsic/GetByExtHash",
             "type": "api",
             "conf": {}
         },
         {
-            "id": 0,
+            "id": 10,
             "name": "Chat",
             "type": "msg"
         },
         {
-            "id": 1,
-            "name": "Block",
-            "type": "api"
-        },
-        {
-            "id": 3,
-            "name": "Event",
-            "type": "api"
-        },
-        {
-            "id": 2,
+            "id": 11,
             "name": "Send",
             "type": "api"
+        },
+        {
+            "id": 14,
+            "name": "tokenNonFungible/GetNonFunIdDetail",
+            "type": "api",
+            "conf": {}
+        },
+        {
+            "id": 15,
+            "name": "tokenNonFungible/ListNftTransfer",
+            "type": "api",
+            "conf": {}
+        },
+        {
+            "id": 13,
+            "name": "tokenNonFungible/ListOwnerNFT",
+            "type": "api",
+            "conf": {}
         }
     ],
     "types": {
-        "block/PtlGetAll/ReqGetAll": {
+        "account/PtlGetBalanceTransfer/ReqGetBalanceTransfer": {
             "type": "Interface",
             "extends": [
                 {
@@ -162,13 +186,46 @@ export const serviceProto: ServiceProto<ServiceType> = {
             "properties": [
                 {
                     "id": 0,
+                    "name": "blockNum",
+                    "type": {
+                        "type": "String"
+                    },
+                    "optional": true
+                },
+                {
+                    "id": 6,
+                    "name": "eventIndex",
+                    "type": {
+                        "type": "String"
+                    },
+                    "optional": true
+                },
+                {
+                    "id": 4,
+                    "name": "fromAccount",
+                    "type": {
+                        "type": "String"
+                    },
+                    "optional": true
+                },
+                {
+                    "id": 5,
+                    "name": "toAccount",
+                    "type": {
+                        "type": "String"
+                    },
+                    "optional": true
+                },
+                {
+                    "id": 2,
                     "name": "pageIndex",
                     "type": {
                         "type": "Number"
-                    }
+                    },
+                    "optional": true
                 },
                 {
-                    "id": 1,
+                    "id": 3,
                     "name": "limit",
                     "type": {
                         "type": "Number"
@@ -180,7 +237,7 @@ export const serviceProto: ServiceProto<ServiceType> = {
         "base/BaseRequest": {
             "type": "Interface"
         },
-        "block/PtlGetAll/ResGetAll": {
+        "account/PtlGetBalanceTransfer/ResGetBalanceTransfer": {
             "type": "Interface",
             "extends": [
                 {
@@ -203,6 +260,57 @@ export const serviceProto: ServiceProto<ServiceType> = {
         },
         "base/BaseResponse": {
             "type": "Interface"
+        },
+        "block/PtlGetAll/ReqGetAll": {
+            "type": "Interface",
+            "extends": [
+                {
+                    "id": 0,
+                    "type": {
+                        "type": "Reference",
+                        "target": "base/BaseRequest"
+                    }
+                }
+            ],
+            "properties": [
+                {
+                    "id": 0,
+                    "name": "pageIndex",
+                    "type": {
+                        "type": "Number"
+                    },
+                    "optional": true
+                },
+                {
+                    "id": 1,
+                    "name": "limit",
+                    "type": {
+                        "type": "Number"
+                    },
+                    "optional": true
+                }
+            ]
+        },
+        "block/PtlGetAll/ResGetAll": {
+            "type": "Interface",
+            "extends": [
+                {
+                    "id": 0,
+                    "type": {
+                        "type": "Reference",
+                        "target": "base/BaseResponse"
+                    }
+                }
+            ],
+            "properties": [
+                {
+                    "id": 0,
+                    "name": "content",
+                    "type": {
+                        "type": "String"
+                    }
+                }
+            ]
         },
         "block/PtlGetBy/ReqGetBy": {
             "type": "Interface",
@@ -285,7 +393,8 @@ export const serviceProto: ServiceProto<ServiceType> = {
                     "name": "pageIndex",
                     "type": {
                         "type": "Number"
-                    }
+                    },
+                    "optional": true
                 },
                 {
                     "id": 2,
@@ -494,13 +603,22 @@ export const serviceProto: ServiceProto<ServiceType> = {
                 },
                 {
                     "id": 1,
-                    "name": "pageIndex",
+                    "name": "signer",
                     "type": {
-                        "type": "Number"
-                    }
+                        "type": "String"
+                    },
+                    "optional": true
                 },
                 {
                     "id": 2,
+                    "name": "pageIndex",
+                    "type": {
+                        "type": "Number"
+                    },
+                    "optional": true
+                },
+                {
+                    "id": 3,
                     "name": "limit",
                     "type": {
                         "type": "Number"
@@ -640,103 +758,6 @@ export const serviceProto: ServiceProto<ServiceType> = {
                 }
             ]
         },
-        "PtlBlock/ReqBlock": {
-            "type": "Interface",
-            "properties": [
-                {
-                    "id": 2,
-                    "name": "block_num",
-                    "type": {
-                        "type": "String"
-                    }
-                }
-            ]
-        },
-        "PtlBlock/ResBlock": {
-            "type": "Interface",
-            "properties": [
-                {
-                    "id": 8,
-                    "name": "block_num",
-                    "type": {
-                        "type": "String"
-                    }
-                },
-                {
-                    "id": 1,
-                    "name": "block_hash",
-                    "type": {
-                        "type": "String"
-                    }
-                },
-                {
-                    "id": 2,
-                    "name": "parent_block_hash",
-                    "type": {
-                        "type": "String"
-                    }
-                },
-                {
-                    "id": 3,
-                    "name": "extrinsics_hash",
-                    "type": {
-                        "type": "String"
-                    }
-                },
-                {
-                    "id": 4,
-                    "name": "state_hash",
-                    "type": {
-                        "type": "String"
-                    }
-                },
-                {
-                    "id": 5,
-                    "name": "contentHash",
-                    "type": {
-                        "type": "String"
-                    }
-                },
-                {
-                    "id": 6,
-                    "name": "total_extrinsic_hash",
-                    "type": {
-                        "type": "String"
-                    }
-                },
-                {
-                    "id": 7,
-                    "name": "timestamp",
-                    "type": {
-                        "type": "Date"
-                    }
-                }
-            ]
-        },
-        "PtlEvent/ReqEvent": {
-            "type": "Interface",
-            "properties": [
-                {
-                    "id": 0,
-                    "name": "content",
-                    "type": {
-                        "type": "String"
-                    }
-                }
-            ]
-        },
-        "PtlEvent/ResEvent": {
-            "type": "Interface",
-            "properties": [
-                {
-                    "id": 0,
-                    "name": "time",
-                    "type": {
-                        "type": "Date"
-                    }
-                }
-            ]
-        },
         "PtlSend/ReqSend": {
             "type": "Interface",
             "properties": [
@@ -757,6 +778,247 @@ export const serviceProto: ServiceProto<ServiceType> = {
                     "name": "time",
                     "type": {
                         "type": "Date"
+                    }
+                }
+            ]
+        },
+        "tokenNonFungible/PtlGetNonFunIdDetail/ReqGetNonFunIdDetail": {
+            "type": "Interface",
+            "extends": [
+                {
+                    "id": 0,
+                    "type": {
+                        "type": "Reference",
+                        "target": "base/BaseRequest"
+                    }
+                }
+            ],
+            "properties": [
+                {
+                    "id": 0,
+                    "name": "who",
+                    "type": {
+                        "type": "String"
+                    },
+                    "optional": true
+                },
+                {
+                    "id": 1,
+                    "name": "nonFungibleTokenId",
+                    "type": {
+                        "type": "String"
+                    },
+                    "optional": true
+                },
+                {
+                    "id": 2,
+                    "name": "pageIndex",
+                    "type": {
+                        "type": "Number"
+                    },
+                    "optional": true
+                },
+                {
+                    "id": 3,
+                    "name": "limit",
+                    "type": {
+                        "type": "Number"
+                    },
+                    "optional": true
+                }
+            ]
+        },
+        "tokenNonFungible/PtlGetNonFunIdDetail/ResGetNonFunIdDetail": {
+            "type": "Interface",
+            "extends": [
+                {
+                    "id": 0,
+                    "type": {
+                        "type": "Reference",
+                        "target": "base/BaseResponse"
+                    }
+                }
+            ],
+            "properties": [
+                {
+                    "id": 0,
+                    "name": "content",
+                    "type": {
+                        "type": "String"
+                    }
+                }
+            ]
+        },
+        "tokenNonFungible/PtlListNftTransfer/ReqListNftTransfer": {
+            "type": "Interface",
+            "extends": [
+                {
+                    "id": 0,
+                    "type": {
+                        "type": "Reference",
+                        "target": "base/BaseRequest"
+                    }
+                }
+            ],
+            "properties": [
+                {
+                    "id": 0,
+                    "name": "blockNum",
+                    "type": {
+                        "type": "String"
+                    },
+                    "optional": true
+                },
+                {
+                    "id": 1,
+                    "name": "eventIndex",
+                    "type": {
+                        "type": "String"
+                    },
+                    "optional": true
+                },
+                {
+                    "id": 2,
+                    "name": "fromAccount",
+                    "type": {
+                        "type": "String"
+                    },
+                    "optional": true
+                },
+                {
+                    "id": 3,
+                    "name": "toAccount",
+                    "type": {
+                        "type": "String"
+                    },
+                    "optional": true
+                },
+                {
+                    "id": 4,
+                    "name": "nonFungibleTokenId",
+                    "type": {
+                        "type": "String"
+                    },
+                    "optional": true
+                },
+                {
+                    "id": 5,
+                    "name": "tokenId",
+                    "type": {
+                        "type": "String"
+                    },
+                    "optional": true
+                },
+                {
+                    "id": 6,
+                    "name": "pageIndex",
+                    "type": {
+                        "type": "Number"
+                    },
+                    "optional": true
+                },
+                {
+                    "id": 7,
+                    "name": "limit",
+                    "type": {
+                        "type": "Number"
+                    },
+                    "optional": true
+                }
+            ]
+        },
+        "tokenNonFungible/PtlListNftTransfer/ResListNftTransfer": {
+            "type": "Interface",
+            "extends": [
+                {
+                    "id": 0,
+                    "type": {
+                        "type": "Reference",
+                        "target": "base/BaseResponse"
+                    }
+                }
+            ],
+            "properties": [
+                {
+                    "id": 0,
+                    "name": "content",
+                    "type": {
+                        "type": "String"
+                    }
+                }
+            ]
+        },
+        "tokenNonFungible/PtlListOwnerNFT/ReqListOwnerNFT": {
+            "type": "Interface",
+            "extends": [
+                {
+                    "id": 0,
+                    "type": {
+                        "type": "Reference",
+                        "target": "base/BaseRequest"
+                    }
+                }
+            ],
+            "properties": [
+                {
+                    "id": 0,
+                    "name": "owner",
+                    "type": {
+                        "type": "String"
+                    },
+                    "optional": true
+                },
+                {
+                    "id": 1,
+                    "name": "nonFungibleTokenId",
+                    "type": {
+                        "type": "String"
+                    },
+                    "optional": true
+                },
+                {
+                    "id": 2,
+                    "name": "tokenId",
+                    "type": {
+                        "type": "String"
+                    },
+                    "optional": true
+                },
+                {
+                    "id": 3,
+                    "name": "pageIndex",
+                    "type": {
+                        "type": "Number"
+                    },
+                    "optional": true
+                },
+                {
+                    "id": 4,
+                    "name": "limit",
+                    "type": {
+                        "type": "Number"
+                    },
+                    "optional": true
+                }
+            ]
+        },
+        "tokenNonFungible/PtlListOwnerNFT/ResListOwnerNFT": {
+            "type": "Interface",
+            "extends": [
+                {
+                    "id": 0,
+                    "type": {
+                        "type": "Reference",
+                        "target": "base/BaseResponse"
+                    }
+                }
+            ],
+            "properties": [
+                {
+                    "id": 0,
+                    "name": "content",
+                    "type": {
+                        "type": "String"
                     }
                 }
             ]

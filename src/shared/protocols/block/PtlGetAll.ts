@@ -1,7 +1,7 @@
 import { BaseRequest, BaseResponse, BaseConf } from "../base";
 
 export interface ReqGetAll extends BaseRequest {
-    pageIndex: number
+    pageIndex?: number
     limit?: number
 }
 
