@@ -17,6 +17,7 @@ export async function AccountTransferScript(event: any, block: any, eventIdx: an
 
     accTranEntity.blockNum = block.block.header.number.toString();
     accTranEntity.eventIndex = eventIdx;
+    accTranEntity.extrinsicHash = block.block.extrinsics[extIndex].hash.toString();
     accTranEntity.extrinsicIndex = extIndex;
     accTranEntity.fromAccount = (from as AccountId).toString();
     accTranEntity.toAccount = (to as AccountId).toString();

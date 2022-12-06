@@ -48,6 +48,7 @@ export async function TokenNonFungibleTokenTransferScript(event: any, block: any
 
       tokenNonTransferEntity.blockNum = block.block.header.number.toString();
       tokenNonTransferEntity.eventIndex = eventIdx;
+      tokenNonTransferEntity.extrinsicHash = block.block.extrinsics[extIndex].hash.toString();
       tokenNonTransferEntity.extrinsicIndex = extIndex;
       tokenNonTransferEntity.fromAccount = (from as AccountId).toString();
       tokenNonTransferEntity.toAccount = (to as AccountId).toString();

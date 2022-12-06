@@ -9,7 +9,10 @@ export class AccountTransfer {
 
     @PrimaryColumn()
     eventIndex!: number
-    
+
+    @Column()
+    extrinsicHash!: string
+
     @Column()
     extrinsicIndex!: number
 

@@ -273,7 +273,7 @@ const start_query_block_chain = async () => {
         Block, Extrinsic, Event, AccountTransfer, TokenNonFungibleCreated, TokenNonFungibleTransfer, TokenNonFungible
     ],
     synchronize: true,
-    logging: true
+    logging: false
 }).then(async (connection) => {
     console.log("TsRPC Connect PostgreSQL Successed!");
 

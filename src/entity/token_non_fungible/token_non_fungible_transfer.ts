@@ -11,6 +11,9 @@ export class TokenNonFungibleTransfer {
     eventIndex!: number
     
     @Column()
+    extrinsicHash!: string
+
+    @Column()
     extrinsicIndex!: number
 
     @Column()
