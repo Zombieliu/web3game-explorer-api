@@ -5,7 +5,7 @@ import _ from 'lodash';
 @Entity()
 export class TokenNonFungibleTransfer {
     @PrimaryColumn({ type: 'bigint' })
-    blockNum!: number;
+    blockNum!: string;
 
     @PrimaryColumn()
     eventIndex!: number
@@ -45,8 +45,8 @@ export class TokenNonFungibleTransferRepository extends Repository<TokenNonFungi
     limit = maxLimit,
   ): Promise<DataResult<TokenNonFungibleTransfer>> {
     let qb = this.createQueryBuilder('token_non_fungible_transfer')
-      .orderBy('blockNum', 'DESC')
-      .addOrderBy('eventIndex', 'DESC')
+      .orderBy('token_non_fungible_transfer.blockNum', 'DESC')
+      .addOrderBy('token_non_fungible_transfer.eventIndex', 'DESC')
       .skip(offset)
       .take(limit > maxLimit ? maxLimit : limit);
 
