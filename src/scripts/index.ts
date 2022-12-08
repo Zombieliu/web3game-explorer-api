@@ -9,11 +9,15 @@ import { AccountTransfer } from '../entity/balance/balance_transfer';
 import { TokenNonFungible } from '../entity/token_non_fungible/token_non_fungible';
 import { TokenNonFungibleCreated } from '../entity/token_non_fungible/token_non_fungible_created';
 import { TokenNonFungibleTransfer } from '../entity/token_non_fungible/token_non_fungible_transfer';
+import { TokenFungibleTransfer } from '../entity/token_fungible/token_fungible_transfer';
+import { TokenMultiTransfer } from '../entity/token_multi/token_multi_transfer';
 
 import { getRepository, createConnection } from 'typeorm';
 
 import { AccountTransferScript } from './balance/balance_transfer';
 import { TokenNonFungibleTokenCreatedScript, TokenNonFungibleTokenTransferScript, TokenNonFungibleScript } from './token_non_fungible/token_non_fungible';
+import { TokenFungibleTransferScript } from './token_fungible/token_fungible_transfer';
+import { TokenMultiTransferScript } from './token_multi/token_multi_transfer';
 
 const blocks_process = async (block_number:number,api:any)=>{
   if (block_number === 0){
@@ -191,6 +195,9 @@ const extrinsic_process = async (block_number:number,api:any) => {
     await TokenNonFungibleTokenCreatedScript(event, signedBlock, event_index);
     await TokenNonFungibleTokenTransferScript(event, signedBlock, event_index);
     await TokenNonFungibleScript(event, signedBlock, event_index);
+    await TokenFungibleTransferScript(event, signedBlock, event_index);
+    await TokenMultiTransferScript(event, signedBlock, event_index);
+
     // // calculate the fee of extrinsic
     // const extrinsicId = `${eventEntity.block_num}-${extIndex}`;
     // if (section === 'treasury' && event.method === 'Deposit') {
@@ -270,7 +277,7 @@ const start_query_block_chain = async () => {
     password: "123456",
     database: "postgres",
     entities: [
-        Block, Extrinsic, Event, AccountTransfer, TokenNonFungibleCreated, TokenNonFungibleTransfer, TokenNonFungible
+        Block, Extrinsic, Event, AccountTransfer, TokenNonFungibleCreated, TokenNonFungibleTransfer, TokenNonFungible, TokenFungibleTransfer, TokenMultiTransfer
     ],
     synchronize: true,
     logging: false
