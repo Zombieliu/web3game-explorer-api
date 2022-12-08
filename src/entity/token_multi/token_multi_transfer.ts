@@ -25,7 +25,6 @@ export class TokenMultiTransfer {
     @Column()
     toAccount!: string
     
-    
     @Column({ type: 'jsonb' })
     tokenIds!: string[]
 

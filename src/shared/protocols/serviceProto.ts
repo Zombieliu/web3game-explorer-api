@@ -11,6 +11,8 @@ import { ReqGetByBlockNumAndIndex as ReqGetByBlockNumAndIndex_1, ResGetByBlockNu
 import { ReqGetByExtHash, ResGetByExtHash } from './extrinsic/PtlGetByExtHash';
 import { MsgChat } from './MsgChat';
 import { ReqSend, ResSend } from './PtlSend';
+import { ReqListTokenFungibleTransfer, ResListTokenFungibleTransfer } from './tokenFungible/PtlListTokenFungibleTransfer';
+import { ReqListTokenMultiTransfer, ResListTokenMultiTransfer } from './tokenMulti/PtlListTokenMultiTransfer';
 import { ReqGetNonFunIdDetail, ResGetNonFunIdDetail } from './tokenNonFungible/PtlGetNonFunIdDetail';
 import { ReqListNftTransfer, ResListNftTransfer } from './tokenNonFungible/PtlListNftTransfer';
 import { ReqListOwnerNFT, ResListOwnerNFT } from './tokenNonFungible/PtlListOwnerNFT';
@@ -61,6 +63,14 @@ export interface ServiceType {
             req: ReqSend,
             res: ResSend
         },
+        "tokenFungible/ListTokenFungibleTransfer": {
+            req: ReqListTokenFungibleTransfer,
+            res: ResListTokenFungibleTransfer
+        },
+        "tokenMulti/ListTokenMultiTransfer": {
+            req: ReqListTokenMultiTransfer,
+            res: ResListTokenMultiTransfer
+        },
         "tokenNonFungible/GetNonFunIdDetail": {
             req: ReqGetNonFunIdDetail,
             res: ResGetNonFunIdDetail
@@ -80,7 +90,7 @@ export interface ServiceType {
 }
 
 export const serviceProto: ServiceProto<ServiceType> = {
-    "version": 4,
+    "version": 5,
     "services": [
         {
             "id": 12,
@@ -151,6 +161,18 @@ export const serviceProto: ServiceProto<ServiceType> = {
             "id": 11,
             "name": "Send",
             "type": "api"
+        },
+        {
+            "id": 16,
+            "name": "tokenFungible/ListTokenFungibleTransfer",
+            "type": "api",
+            "conf": {}
+        },
+        {
+            "id": 17,
+            "name": "tokenMulti/ListTokenMultiTransfer",
+            "type": "api",
+            "conf": {}
         },
         {
             "id": 14,
@@ -778,6 +800,188 @@ export const serviceProto: ServiceProto<ServiceType> = {
                     "name": "time",
                     "type": {
                         "type": "Date"
+                    }
+                }
+            ]
+        },
+        "tokenFungible/PtlListTokenFungibleTransfer/ReqListTokenFungibleTransfer": {
+            "type": "Interface",
+            "extends": [
+                {
+                    "id": 0,
+                    "type": {
+                        "type": "Reference",
+                        "target": "base/BaseRequest"
+                    }
+                }
+            ],
+            "properties": [
+                {
+                    "id": 0,
+                    "name": "blockNum",
+                    "type": {
+                        "type": "String"
+                    },
+                    "optional": true
+                },
+                {
+                    "id": 1,
+                    "name": "eventIndex",
+                    "type": {
+                        "type": "String"
+                    },
+                    "optional": true
+                },
+                {
+                    "id": 2,
+                    "name": "fromAccount",
+                    "type": {
+                        "type": "String"
+                    },
+                    "optional": true
+                },
+                {
+                    "id": 3,
+                    "name": "toAccount",
+                    "type": {
+                        "type": "String"
+                    },
+                    "optional": true
+                },
+                {
+                    "id": 4,
+                    "name": "fungibleTokenId",
+                    "type": {
+                        "type": "String"
+                    },
+                    "optional": true
+                },
+                {
+                    "id": 5,
+                    "name": "pageIndex",
+                    "type": {
+                        "type": "Number"
+                    },
+                    "optional": true
+                },
+                {
+                    "id": 6,
+                    "name": "limit",
+                    "type": {
+                        "type": "Number"
+                    },
+                    "optional": true
+                }
+            ]
+        },
+        "tokenFungible/PtlListTokenFungibleTransfer/ResListTokenFungibleTransfer": {
+            "type": "Interface",
+            "extends": [
+                {
+                    "id": 0,
+                    "type": {
+                        "type": "Reference",
+                        "target": "base/BaseResponse"
+                    }
+                }
+            ],
+            "properties": [
+                {
+                    "id": 0,
+                    "name": "content",
+                    "type": {
+                        "type": "String"
+                    }
+                }
+            ]
+        },
+        "tokenMulti/PtlListTokenMultiTransfer/ReqListTokenMultiTransfer": {
+            "type": "Interface",
+            "extends": [
+                {
+                    "id": 0,
+                    "type": {
+                        "type": "Reference",
+                        "target": "base/BaseRequest"
+                    }
+                }
+            ],
+            "properties": [
+                {
+                    "id": 0,
+                    "name": "blockNum",
+                    "type": {
+                        "type": "String"
+                    },
+                    "optional": true
+                },
+                {
+                    "id": 1,
+                    "name": "eventIndex",
+                    "type": {
+                        "type": "String"
+                    },
+                    "optional": true
+                },
+                {
+                    "id": 2,
+                    "name": "fromAccount",
+                    "type": {
+                        "type": "String"
+                    },
+                    "optional": true
+                },
+                {
+                    "id": 3,
+                    "name": "toAccount",
+                    "type": {
+                        "type": "String"
+                    },
+                    "optional": true
+                },
+                {
+                    "id": 4,
+                    "name": "multiTokenId",
+                    "type": {
+                        "type": "String"
+                    },
+                    "optional": true
+                },
+                {
+                    "id": 5,
+                    "name": "pageIndex",
+                    "type": {
+                        "type": "Number"
+                    },
+                    "optional": true
+                },
+                {
+                    "id": 6,
+                    "name": "limit",
+                    "type": {
+                        "type": "Number"
+                    },
+                    "optional": true
+                }
+            ]
+        },
+        "tokenMulti/PtlListTokenMultiTransfer/ResListTokenMultiTransfer": {
+            "type": "Interface",
+            "extends": [
+                {
+                    "id": 0,
+                    "type": {
+                        "type": "Reference",
+                        "target": "base/BaseResponse"
+                    }
+                }
+            ],
+            "properties": [
+                {
+                    "id": 0,
+                    "name": "content",
+                    "type": {
+                        "type": "String"
                     }
                 }
             ]
