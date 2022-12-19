@@ -2,6 +2,8 @@ import { Entity, Column, PrimaryColumn, EntityRepository, Repository } from 'typ
 import { defaultOffset, maxLimit, PageQueries, DataResult } from '../../common';
 import _ from 'lodash';
 
+import { TokenFungibleCreated } from './token_fungible_created'
+
 @Entity()
 export class TokenFungibleTransfer {
     @PrimaryColumn({ type: 'bigint' })
@@ -30,6 +32,8 @@ export class TokenFungibleTransfer {
   
     @Column()
     timestamp!: Date
+
+    tokenFungibleCreated: TokenFungibleCreated | null = null;
 }
 
 @EntityRepository(TokenFungibleTransfer)
@@ -46,6 +50,12 @@ export class TokenFungibleTransferRepository extends Repository<TokenFungibleTra
     let qb = this.createQueryBuilder('token_fungible_transfer')
       .orderBy('token_fungible_transfer.blockNum', 'DESC')
       .addOrderBy('token_fungible_transfer.eventIndex', 'DESC')
+      .leftJoinAndMapOne(
+        'token_fungible_transfer.tokenFungibleCreated',
+        TokenFungibleCreated,
+        'token_fungible_created',
+        'token_fungible_created.fungibleTokenId = token_fungible_transfer.fungibleTokenId',
+      )
       .skip(offset)
       .take(limit > maxLimit ? maxLimit : limit);
 
