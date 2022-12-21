@@ -10,10 +10,10 @@ export class TokenNonFungible {
     @PrimaryColumn()
     owner!: string;
 
-    @PrimaryColumn({ type: 'bigint' })
+    @PrimaryColumn()
     nonFungibleTokenId!: string;
 
-    @PrimaryColumn({ type: 'bigint' })
+    @PrimaryColumn()
     tokenId!: string;
 
     @Column({ type: 'bigint' })

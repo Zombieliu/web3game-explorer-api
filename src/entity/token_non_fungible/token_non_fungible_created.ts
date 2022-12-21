@@ -13,7 +13,7 @@ export class TokenNonFungibleCreated {
     @Column()
     extrinsicIndex!: number
     
-    @PrimaryColumn({ type: 'bigint' })
+    @PrimaryColumn()
     nonFungibleTokenId!: string;
 
     @PrimaryColumn()

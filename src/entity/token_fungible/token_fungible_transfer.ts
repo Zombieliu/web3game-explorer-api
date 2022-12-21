@@ -18,7 +18,7 @@ export class TokenFungibleTransfer {
     @Column()
     extrinsicIndex!: number
 
-    @Column({ type: 'bigint' })
+    @Column()
     fungibleTokenId!: string 
 
     @Column()

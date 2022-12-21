@@ -22,10 +22,10 @@ export class TokenNonFungibleTransfer {
     @Column()
     toAccount!:String
 
-    @Column({ type: 'bigint' })
+    @Column()
     nonFungibleTokenId!: string;
 
-    @Column({ type: 'bigint' })
+    @Column()
     tokenId!: string;
   
     @Column()

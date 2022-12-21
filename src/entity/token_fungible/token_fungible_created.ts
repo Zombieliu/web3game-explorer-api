@@ -16,7 +16,7 @@ export class TokenFungibleCreated {
     @Column()
     extrinsicIndex!: number
 
-    @Column({ type: 'bigint' })
+    @Column()
     fungibleTokenId!: string 
 
     @Column()
