@@ -269,8 +269,8 @@ const loop_start_process = async (last_block_num: number,latest_block_num: numbe
 };
 
 const start_query_block_chain = async () => {
-  // const wsProvider = new WsProvider('wss://devnet.web3games.org');
-  const wsProvider = new WsProvider('ws://127.0.0.1:9944');
+  const wsProvider = new WsProvider('wss://devnet.web3games.org');
+  // const wsProvider = new WsProvider('ws://127.0.0.1:9944');
   const api = await ApiPromise.create({ provider: wsProvider });
   createConnection({
     type: "postgres",
