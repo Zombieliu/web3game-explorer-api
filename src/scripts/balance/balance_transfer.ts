@@ -6,6 +6,7 @@ import { AccountTransfer } from '../../entity/balance/balance_transfer';
 import { Event } from '../../entity/events';
 import { getRepository, createConnection } from 'typeorm';
 import {Balance,AccountId,Moment} from "@polkadot/types/interfaces";
+import { TokenFungibleTransfer, TokenFungibleTransferRepository } from '../../entity/token_fungible/token_fungible_transfer';
 
 export async function AccountTransferScript(event: any, block: any, eventIdx: any, api?:any) {
   const {event: {data: [from, to, amount], section, method}, phase} = event;
@@ -28,6 +29,24 @@ export async function AccountTransferScript(event: any, block: any, eventIdx: an
       await getRepository(AccountTransfer).insert(accTranEntity);
     } catch (e) {
       await getRepository(AccountTransfer).save(accTranEntity);
+    }
+    let tokenTransferEntity = new TokenFungibleTransfer()
+
+    tokenTransferEntity.blockNum = block.block.header.number.toString();
+    tokenTransferEntity.eventIndex = eventIdx;
+    tokenTransferEntity.extrinsicHash = block.block.extrinsics[extIndex].hash.toString();
+    tokenTransferEntity.extrinsicIndex = extIndex;
+    tokenTransferEntity.fromAccount = (from as AccountId).toString();
+    tokenTransferEntity.toAccount = (to as AccountId).toString();
+    tokenTransferEntity.fungibleTokenId = "9999";
+    tokenTransferEntity.balance = (amount as Balance).toString();;
+    tokenTransferEntity.timestamp = new Date(moment.toNumber());
+
+    console.debug(`${tokenTransferEntity.blockNum}-${tokenTransferEntity.eventIndex} TokenFungible(${tokenTransferEntity.fromAccount} transfer ${tokenTransferEntity.fungibleTokenId} to ${tokenTransferEntity.toAccount}) success saved`)
+    try {
+      await getRepository(TokenFungibleTransfer).insert(tokenTransferEntity);
+    } catch (e) {
+      await getRepository(TokenFungibleTransfer).save(tokenTransferEntity);
     }
   }
 }
