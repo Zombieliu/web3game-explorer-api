@@ -38,7 +38,7 @@ export async function AccountTransferScript(event: any, block: any, eventIdx: an
     tokenTransferEntity.extrinsicIndex = extIndex;
     tokenTransferEntity.fromAccount = (from as AccountId).toString();
     tokenTransferEntity.toAccount = (to as AccountId).toString();
-    tokenTransferEntity.fungibleTokenId = "9999";
+    tokenTransferEntity.fungibleTokenId = "-1";
     tokenTransferEntity.balance = (amount as Balance).toString();;
     tokenTransferEntity.timestamp = new Date(moment.toNumber());
 
