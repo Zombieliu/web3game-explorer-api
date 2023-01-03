@@ -69,13 +69,13 @@ export class TokenFungibleTransferRepository extends Repository<TokenFungibleTra
     }
 
     if (!_.isUndefined(fungibleTokenId)) {
-      qb = qb.andWhere('token_fungible_created.fungibleTokenId = :fungibleTokenId and token_fungible_transfer.fungibleTokenId = :fungibleTokenId', { fungibleTokenId })
+      qb = qb.andWhere('(token_fungible_created.fungibleTokenId = :fungibleTokenId and token_fungible_transfer.fungibleTokenId = :fungibleTokenId)', { fungibleTokenId })
     }
   
 
     if (!_.isUndefined(fromAccount) || !_.isUndefined(toAccount)) {
       if (!_.isUndefined(fromAccount) && !_.isUndefined(toAccount)) {
-        qb = qb.andWhere('token_fungible_transfer.fromAccount = :fromAccount or token_fungible_transfer.toAccount = :toAccount', { fromAccount, toAccount });
+        qb = qb.andWhere('(token_fungible_transfer.fromAccount = :fromAccount or token_fungible_transfer.toAccount = :toAccount)', { fromAccount, toAccount });
       } else if (!_.isUndefined(fromAccount)) {
         qb = qb.andWhere('token_fungible_transfer.fromAccount = :fromAccount', { fromAccount });
       } else if (!_.isUndefined(toAccount)) {
