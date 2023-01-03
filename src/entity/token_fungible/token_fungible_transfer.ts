@@ -69,7 +69,7 @@ export class TokenFungibleTransferRepository extends Repository<TokenFungibleTra
     }
 
     if (!_.isUndefined(fungibleTokenId)) {
-      qb = qb.andWhere('token_fungible_transfer.fungibleTokenId = :fungibleTokenId', { fungibleTokenId });
+      qb = qb.andWhere('token_fungible_created.fungibleTokenId = :fungibleTokenId and token_fungible_transfer.fungibleTokenId = :fungibleTokenId', { fungibleTokenId })
     }
   
 
